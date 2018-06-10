@@ -19,26 +19,24 @@ func NewServer() *Server {
 
 func (s *Server) Run(listen net.Listener) error {
 	srv := grpc.NewServer()
-	RegisterPingServer(srv, &StreamServer{})
+	RegisterPingServer(srv, s)
 	return srv.Serve(listen)
 }
 
-func (s *StreamServer) Hello(req *Request, stream Ping_HelloServer) error {
+func (s *Server) Hello(req *Request, stream Ping_HelloServer) error {
 	fmt.Printf("%+v", req)
 	//res := new(Response)
-	for {
+	pinger, err := NewPinger("www.baidu.com")
+	if err != nil {
+		panic(err)
+	}
+	pinger.Count = 10
+	pinger.Run()
+	/* 	for {
 		res := &Response{Msg: req.Host}
 		if err := stream.Send(res); err != nil {
 			return err
 		}
-	}
-	return nil
-}
-
-func (s *Server) Send(res *Response) error {
-	res = new(Response)
-
-	res.Msg = fmt.Sprintf("q=%s", "req.Host")
-
+	} */
 	return nil
 }

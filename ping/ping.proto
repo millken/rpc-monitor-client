@@ -8,8 +8,11 @@ service Ping {
 
 message Request{
   string host = 1;
+  int32 count = 2;
 }
 
 message Response {
-  string msg = 1;
+  string addr = 1;
+  float time = 2; //ms
+  int32 seq = 3;
 }

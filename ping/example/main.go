@@ -20,7 +20,7 @@ func main() {
 	client := ping.NewPingClient(conn)
 
 	req := &ping.Request{
-		Host: "127.0.0.1",
+		Host: "www.g.com",
 	}
 	stream, err := client.Hello(context.Background(), req)
 	if err != nil {
@@ -34,7 +34,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("%v.Hello(_) = _, %v", client, err)
 		}
-		log.Printf("Hello: %v", hello)
+		log.Printf("Hello: %+v time: %.2f", hello, hello.Time)
 	}
 	log.Println("END")
 }

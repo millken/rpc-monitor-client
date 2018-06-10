@@ -43,6 +43,9 @@ type Pinger struct {
 	// stop chan bool
 	done         chan bool
 	lastSendTime time.Time
+
+	// OnRecv is called when Pinger receives and processes a packet
+	OnRecv func(*Packet)
 }
 
 // Packet represents a received and processed ICMP echo packet.
@@ -90,6 +93,7 @@ func NewPinger(addr string) (*Pinger, error) {
 		PacketsRecv: 0,
 		PacketsLost: 0,
 		size:        timeSliceLength,
+		sequence:    1,
 
 		done: make(chan bool),
 	}, nil
@@ -112,10 +116,6 @@ func (p *Pinger) Run() {
 	}
 	defer conn.Close()
 
-	err = p.sendICMP(conn)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
 	var wg sync.WaitGroup
 	recv := make(chan *packet, 5)
 	wg.Add(1)
@@ -123,6 +123,7 @@ func (p *Pinger) Run() {
 
 	interval := time.NewTicker(p.Interval)
 	defer interval.Stop()
+	p.lastSendTime = time.Now()
 	for {
 		select {
 		case <-p.done:
@@ -137,8 +138,8 @@ func (p *Pinger) Run() {
 			if p.PacketsLost+p.PacketsRecv < p.PacketsSent {
 				continue
 			}
-			p.lastSendTime = time.Now()
 			err = p.sendICMP(conn)
+			p.lastSendTime = time.Now()
 			if err != nil {
 				fmt.Println("FATAL: ", err.Error())
 			}
@@ -147,7 +148,7 @@ func (p *Pinger) Run() {
 			if err != nil {
 				fmt.Println("FATAL: ", err.Error())
 			}
-			if p.Count > 0 && p.PacketsRecv >= p.Count {
+			if p.Count > 0 && p.PacketsLost+p.PacketsRecv >= p.Count {
 				close(p.done)
 				wg.Wait()
 				return
@@ -187,6 +188,7 @@ func (p *Pinger) recvICMP(
 	}
 }
 
+//Stop pinger
 func (p *Pinger) Stop() {
 	close(p.done)
 }
@@ -206,7 +208,8 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 		t = append(t, byteSliceOfSize(p.size-timeSliceLength)...)
 	}
 	bytes, err := (&icmp.Message{
-		Type: typ, Code: 0,
+		Type: typ,
+		Code: 0,
 		Body: &icmp.Echo{
 			ID:   p.id,
 			Seq:  p.sequence,
@@ -219,6 +222,7 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 
 	for {
 		if _, err := conn.WriteTo(bytes, dst); err != nil {
+			fmt.Printf("%s", err)
 			if neterr, ok := err.(*net.OpError); ok {
 				if neterr.Err == syscall.ENOBUFS {
 					continue
@@ -238,8 +242,14 @@ func (p *Pinger) processPacket(recv *packet) error {
 		outPkt := &Packet{
 			Nbytes: recv.nbytes,
 			IPAddr: p.ipaddr,
+			Seq:    p.sequence,
 		}
-		fmt.Printf("outPkt: %+v\n", outPkt)
+		p.sequence++
+
+		handler := p.OnRecv
+		if handler != nil {
+			handler(outPkt)
+		}
 		return nil
 	}
 	if p.ipv4 {
@@ -273,10 +283,12 @@ func (p *Pinger) processPacket(recv *packet) error {
 			outPkt.Seq = pkt.Seq
 			p.PacketsRecv++
 			p.sequence++
+			handler := p.OnRecv
+			if handler != nil {
+				handler(outPkt)
+			}
 		}
-		fmt.Printf("%d=%d %d=%d outPkt: %+v, time: %s", pkt.ID, p.id, pkt.Seq, p.sequence, outPkt, outPkt.Rtt)
 	default:
-		// Very bad, not sure how this can happen
 		return fmt.Errorf("Error, invalid ICMP echo reply. Body type: %T, %s",
 			pkt, pkt)
 	}

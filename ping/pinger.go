@@ -1,8 +1,8 @@
 package ping
 
 import (
-	"log"
 	"fmt"
+	"log"
 	"math/rand"
 	"net"
 	"sync"
@@ -41,6 +41,7 @@ type Pinger struct {
 	ipv4        bool
 	size        int
 	sequence    int
+	lastSeq     int
 	// stop chan bool
 	done         chan bool
 	lastSendTime time.Time
@@ -94,9 +95,9 @@ func NewPinger(addr string) (*Pinger, error) {
 		PacketsRecv: 0,
 		PacketsLost: 0,
 		size:        timeSliceLength,
-		sequence:    1,
-
-		done: make(chan bool),
+		sequence:    0,
+		lastSeq:     0,
+		done:        make(chan bool),
 	}, nil
 }
 
@@ -137,11 +138,11 @@ func (p *Pinger) Run() {
 			return
 		case <-interval.C:
 			//timeout
-			if time.Since(p.lastSendTime).Seconds() >= 4 {
+			if time.Since(p.lastSendTime).Seconds() >= 4 && p.lastSeq < p.sequence {
 				p.PacketsLost++
 				recv <- &packet{bytes: []byte{}, nbytes: 0}
 			}
-			if p.PacketsLost+p.PacketsRecv < p.PacketsSent {
+			if p.lastSeq < p.sequence {
 				continue
 			}
 			err = p.sendICMP(conn)
@@ -213,6 +214,7 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 	if p.size-timeSliceLength != 0 {
 		t = append(t, byteSliceOfSize(p.size-timeSliceLength)...)
 	}
+	p.sequence++
 	bytes, err := (&icmp.Message{
 		Type: typ,
 		Code: 0,
@@ -236,7 +238,6 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 			}
 		}
 		p.PacketsSent++
-		p.sequence++
 		break
 	}
 	return nil
@@ -245,17 +246,19 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 func (p *Pinger) processPacket(recv *packet) error {
 	var bytes []byte
 	var proto int
+	p.lastSeq++
 	if recv.nbytes == 0 {
 		outPkt := &Packet{
 			Nbytes: recv.nbytes,
 			IPAddr: p.ipaddr,
-			Seq:    p.sequence,
+			Seq:    p.lastSeq,
 		}
 
 		handler := p.OnRecv
 		if handler != nil {
 			handler(outPkt)
 		}
+
 		return nil
 	}
 	if p.ipv4 {
@@ -284,9 +287,9 @@ func (p *Pinger) processPacket(recv *packet) error {
 
 	switch pkt := m.Body.(type) {
 	case *icmp.Echo:
-		if pkt.ID == p.id && pkt.Seq == (p.sequence -1) {
+		if pkt.ID == p.id && pkt.Seq == p.sequence {
 			outPkt.Rtt = time.Since(bytesToTime(pkt.Data[:timeSliceLength]))
-			outPkt.Seq = pkt.Seq
+			outPkt.Seq = p.lastSeq
 			p.PacketsRecv++
 			handler := p.OnRecv
 			if handler != nil {

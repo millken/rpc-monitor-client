@@ -40,7 +40,9 @@ func (s *Server) Hello(req *Request, stream Ping_HelloServer) error {
 		return err
 	}
 	if req.GetCount() == 0 {
-		pinger.Count = defaultPacketNum
+		pinger.SetCount(defaultPacketNum)
+	}else{
+		pinger.SetCount(int(req.GetCount()))
 	}
 	pinger.OnRecv = func(pkt *Packet) {
 		res := &Response{

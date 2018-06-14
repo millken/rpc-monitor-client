@@ -1,6 +1,7 @@
 package ping
 
 import (
+	"log"
 	"fmt"
 	"math/rand"
 	"net"
@@ -97,6 +98,11 @@ func NewPinger(addr string) (*Pinger, error) {
 
 		done: make(chan bool),
 	}, nil
+}
+
+// Count ping
+func (p *Pinger) SetCount(n int) {
+	p.Count = n
 }
 
 // Run runs the pinger.
@@ -222,7 +228,7 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 
 	for {
 		if _, err := conn.WriteTo(bytes, dst); err != nil {
-			fmt.Printf("%s", err)
+			log.Printf("[ERROR] sendICMP write err: %s", err)
 			if neterr, ok := err.(*net.OpError); ok {
 				if neterr.Err == syscall.ENOBUFS {
 					continue
@@ -230,6 +236,7 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 			}
 		}
 		p.PacketsSent++
+		p.sequence++
 		break
 	}
 	return nil
@@ -244,7 +251,6 @@ func (p *Pinger) processPacket(recv *packet) error {
 			IPAddr: p.ipaddr,
 			Seq:    p.sequence,
 		}
-		p.sequence++
 
 		handler := p.OnRecv
 		if handler != nil {
@@ -278,11 +284,10 @@ func (p *Pinger) processPacket(recv *packet) error {
 
 	switch pkt := m.Body.(type) {
 	case *icmp.Echo:
-		if pkt.ID == p.id && pkt.Seq == p.sequence {
+		if pkt.ID == p.id && pkt.Seq == (p.sequence -1) {
 			outPkt.Rtt = time.Since(bytesToTime(pkt.Data[:timeSliceLength]))
 			outPkt.Seq = pkt.Seq
 			p.PacketsRecv++
-			p.sequence++
 			handler := p.OnRecv
 			if handler != nil {
 				handler(outPkt)

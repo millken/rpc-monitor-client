@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"runtime"
 	"sync"
 	"syscall"
 	"time"
@@ -72,6 +73,15 @@ type packet struct {
 
 // NewPinger returns a new Pinger struct pointer
 func NewPinger(addr string) (*Pinger, error) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			buf := make([]byte, 1024)
+			n := runtime.Stack(buf, true)
+			log.Printf("[ERROR] %s", string(buf[:n]))
+			runtime.Goexit()
+		}
+	}()
 	ipaddr, err := net.ResolveIPAddr("ip", addr)
 	if err != nil {
 		return nil, err
@@ -142,6 +152,10 @@ func (p *Pinger) Run() {
 				p.PacketsLost++
 				recv <- &packet{bytes: []byte{}, nbytes: 0}
 			}
+			// if p.sequence > 3 {
+			// 	a := []string{"1", "2"}
+			// 	fmt.Println(a[3])
+			// }
 			if p.lastSeq < p.sequence {
 				continue
 			}

@@ -4,6 +4,7 @@ import (
 	"log"
 	"math"
 	"net"
+	"runtime"
 	"time"
 
 	"google.golang.org/grpc"
@@ -34,7 +35,15 @@ func (s *Server) Run(listen net.Listener) error {
 
 // Hello Service
 func (s *Server) Hello(req *Request, stream Ping_HelloServer) error {
-
+	defer func() {
+		err := recover()
+		if err != nil {
+			buf := make([]byte, 1024)
+			n := runtime.Stack(buf, true)
+			log.Printf("[ERROR] %s", string(buf[:n]))
+			runtime.Goexit()
+		}
+	}()
 	pinger, err := NewPinger(req.Host)
 	if err != nil {
 		return err

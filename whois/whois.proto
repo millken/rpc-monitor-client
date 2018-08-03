@@ -3,8 +3,7 @@ syntax = "proto3";
 package whois;
 
 service Whois {
-  rpc IP (Request) returns (Response) {}
-  rpc Domain (Request) returns (Response) {}
+  rpc Whois (Request) returns (Response) {}
 }
 
 message Request{

@@ -34,7 +34,7 @@ func (m *Request) Reset()         { *m = Request{} }
 func (m *Request) String() string { return proto.CompactTextString(m) }
 func (*Request) ProtoMessage()    {}
 func (*Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_whois_3bc645182150cd89, []int{0}
+	return fileDescriptor_whois_6bfc286f6e95386a, []int{0}
 }
 func (m *Request) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Request.Unmarshal(m, b)
@@ -72,7 +72,7 @@ func (m *Response) Reset()         { *m = Response{} }
 func (m *Response) String() string { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()    {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_whois_3bc645182150cd89, []int{1}
+	return fileDescriptor_whois_6bfc286f6e95386a, []int{1}
 }
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Response.Unmarshal(m, b)
@@ -116,8 +116,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type WhoisClient interface {
-	IP(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
-	Domain(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	Whois(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 }
 
 type whoisClient struct {
@@ -128,18 +127,9 @@ func NewWhoisClient(cc *grpc.ClientConn) WhoisClient {
 	return &whoisClient{cc}
 }
 
-func (c *whoisClient) IP(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *whoisClient) Whois(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/whois.Whois/IP", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *whoisClient) Domain(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
-	out := new(Response)
-	err := c.cc.Invoke(ctx, "/whois.Whois/Domain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/whois.Whois/Whois", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,46 +138,27 @@ func (c *whoisClient) Domain(ctx context.Context, in *Request, opts ...grpc.Call
 
 // WhoisServer is the server API for Whois service.
 type WhoisServer interface {
-	IP(context.Context, *Request) (*Response, error)
-	Domain(context.Context, *Request) (*Response, error)
+	Whois(context.Context, *Request) (*Response, error)
 }
 
 func RegisterWhoisServer(s *grpc.Server, srv WhoisServer) {
 	s.RegisterService(&_Whois_serviceDesc, srv)
 }
 
-func _Whois_IP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Whois_Whois_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WhoisServer).IP(ctx, in)
+		return srv.(WhoisServer).Whois(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/whois.Whois/IP",
+		FullMethod: "/whois.Whois/Whois",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WhoisServer).IP(ctx, req.(*Request))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Whois_Domain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WhoisServer).Domain(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/whois.Whois/Domain",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WhoisServer).Domain(ctx, req.(*Request))
+		return srv.(WhoisServer).Whois(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -197,29 +168,24 @@ var _Whois_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*WhoisServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "IP",
-			Handler:    _Whois_IP_Handler,
-		},
-		{
-			MethodName: "Domain",
-			Handler:    _Whois_Domain_Handler,
+			MethodName: "Whois",
+			Handler:    _Whois_Whois_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "whois/whois.proto",
 }
 
-func init() { proto.RegisterFile("whois/whois.proto", fileDescriptor_whois_3bc645182150cd89) }
+func init() { proto.RegisterFile("whois/whois.proto", fileDescriptor_whois_6bfc286f6e95386a) }
 
-var fileDescriptor_whois_3bc645182150cd89 = []byte{
-	// 139 bytes of a gzipped FileDescriptorProto
+var fileDescriptor_whois_6bfc286f6e95386a = []byte{
+	// 123 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2c, 0xcf, 0xc8, 0xcf,
 	0x2c, 0xd6, 0x07, 0x93, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0xac, 0x60, 0x8e, 0x92, 0x2c,
 	0x17, 0x7b, 0x50, 0x6a, 0x61, 0x69, 0x6a, 0x71, 0x89, 0x90, 0x10, 0x17, 0x4b, 0x5e, 0x62, 0x6e,
 	0xaa, 0x04, 0xa3, 0x02, 0xa3, 0x06, 0x67, 0x10, 0x98, 0xad, 0x24, 0xc7, 0xc5, 0x11, 0x94, 0x5a,
 	0x5c, 0x90, 0x9f, 0x57, 0x9c, 0x0a, 0x92, 0x4f, 0x49, 0x2c, 0x49, 0x84, 0xc9, 0x83, 0xd8, 0x46,
-	0xb1, 0x5c, 0xac, 0xe1, 0x20, 0x73, 0x84, 0xd4, 0xb9, 0x98, 0x3c, 0x03, 0x84, 0xf8, 0xf4, 0x20,
-	0x56, 0x40, 0x8d, 0x94, 0xe2, 0x87, 0xf3, 0x21, 0x66, 0x28, 0x31, 0x08, 0x69, 0x73, 0xb1, 0xb9,
-	0xe4, 0xe7, 0x26, 0x66, 0xe6, 0x11, 0xa1, 0x38, 0x89, 0x0d, 0xec, 0x56, 0x63, 0x40, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0x59, 0x56, 0x44, 0x56, 0xc0, 0x00, 0x00, 0x00,
+	0xc6, 0x5c, 0xac, 0xe1, 0x20, 0x73, 0x84, 0xb4, 0x60, 0x0c, 0x3e, 0x3d, 0x88, 0x2d, 0x50, 0x53,
+	0xa5, 0xf8, 0xe1, 0x7c, 0x88, 0x31, 0x4a, 0x0c, 0x49, 0x6c, 0x60, 0x17, 0x18, 0x03, 0x02, 0x00,
+	0x00, 0xff, 0xff, 0xbe, 0x85, 0x61, 0x96, 0x96, 0x00, 0x00, 0x00,
 }

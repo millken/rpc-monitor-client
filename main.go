@@ -8,8 +8,10 @@ import (
 	"runtime"
 
 	"./ping"
+	"./whois"
 	"github.com/hashicorp/logutils"
 	"github.com/kardianos/service"
+	"google.golang.org/grpc"
 )
 
 func stack() {
@@ -30,12 +32,14 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	lis, err := net.Listen("tcp", ":6543")
+	listen, err := net.Listen("tcp", ":6543")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	pingServer := ping.NewServer()
-	pingServer.Run(lis)
+	srv := grpc.NewServer()
+	ping.RegisterPingServer(srv, ping.NewService())
+	whois.RegisterWhoisServer(srv, whois.NewService())
+	srv.Serve(listen)
 }
 func (p *program) Stop(s service.Service) error {
 	return nil

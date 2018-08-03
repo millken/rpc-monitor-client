@@ -24,8 +24,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Request struct {
-	Host                 string   `protobuf:"bytes,1,opt,name=host" json:"host,omitempty"`
-	Count                int32    `protobuf:"varint,2,opt,name=count" json:"count,omitempty"`
+	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Count                int32    `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -70,9 +70,9 @@ func (m *Request) GetCount() int32 {
 }
 
 type Response struct {
-	Addr                 string   `protobuf:"bytes,1,opt,name=addr" json:"addr,omitempty"`
-	Time                 float32  `protobuf:"fixed32,2,opt,name=time" json:"time,omitempty"`
-	Seq                  int32    `protobuf:"varint,3,opt,name=seq" json:"seq,omitempty"`
+	Addr                 string   `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
+	Time                 float32  `protobuf:"fixed32,2,opt,name=time,proto3" json:"time,omitempty"`
+	Seq                  int32    `protobuf:"varint,3,opt,name=seq,proto3" json:"seq,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

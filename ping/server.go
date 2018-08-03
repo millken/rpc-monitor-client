@@ -3,11 +3,8 @@ package ping
 import (
 	"log"
 	"math"
-	"net"
 	"runtime"
 	"time"
-
-	"google.golang.org/grpc"
 )
 
 const defaultPacketNum = 100
@@ -22,15 +19,8 @@ func (hd milliDuration) Float() float32 {
 	return float32(milliseconds)
 }
 
-func NewServer() *Server {
+func NewService() *Server {
 	return &Server{}
-}
-
-// Run server
-func (s *Server) Run(listen net.Listener) error {
-	srv := grpc.NewServer()
-	RegisterPingServer(srv, s)
-	return srv.Serve(listen)
 }
 
 // Hello Service

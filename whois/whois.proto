@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package whois;
+
+service Whois {
+  rpc IP (Request) returns (Response) {}
+  rpc Domain (Request) returns (Response) {}
+}
+
+message Request{
+  string name = 1;
+}
+
+message Response {
+  string data = 1;
+}

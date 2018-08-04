@@ -15,7 +15,7 @@ func NewService() *Server {
 }
 
 func (s *Server) Whois(ctx context.Context, req *Request) (res *Response, err error) {
-	w, err := jwhois.Whois(req.Name)
+	tpe, w, err := jwhois.Whois(req.Name)
 
 	if err != nil {
 		return nil, err
@@ -23,6 +23,7 @@ func (s *Server) Whois(ctx context.Context, req *Request) (res *Response, err er
 	fmt.Println("Source: " + string(w))
 
 	res = &Response{
+		Type: tpe,
 		Data: string(w),
 	}
 	return res, nil

@@ -12,4 +12,6 @@ message Request{
 
 message Response {
   string data = 1;
+  int32 type = 2;
+  
 }

@@ -14,14 +14,7 @@ func NewService() *Server {
 	return &Server{}
 }
 
-// Ip Service
-func (s *Server) IP(ctx context.Context, req *Request) (res *Response, err error) {
-
-	return nil, nil
-}
-
-// Domain service
-func (s *Server) Domain(ctx context.Context, req *Request) (res *Response, err error) {
+func (s *Server) Whois(ctx context.Context, req *Request) (res *Response, err error) {
 	w, err := jwhois.Whois(req.Name)
 
 	if err != nil {

@@ -19,9 +19,9 @@ func main() {
 	client := whois.NewWhoisClient(conn)
 
 	req := &whois.Request{
-		Name: "www.g.com",
+		Name: "google.com",
 	}
-	data, err := client.IP(context.Background(), req)
+	data, err := client.Domain(context.Background(), req)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}

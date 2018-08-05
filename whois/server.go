@@ -3,9 +3,8 @@ package whois
 import (
 	"context"
 	"fmt"
-	"log"
 
-	"github.com/millken/ripego"
+	"github.com/millken/jwhois"
 )
 
 type Server struct {
@@ -17,24 +16,21 @@ func NewService() *Server {
 
 // Ip Service
 func (s *Server) IP(ctx context.Context, req *Request) (res *Response, err error) {
-	w, err := ripego.IPLookup("8.8.8.8")
 
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Inetnum: " + w.Inetnum)
-	fmt.Println("Desc: " + w.Descr)
-	fmt.Println("Source: " + w.Source)
-
-	res = &Response{
-		Data: w.Descr,
-	}
-	return
+	return nil, nil
 }
 
 // Domain service
 func (s *Server) Domain(ctx context.Context, req *Request) (res *Response, err error) {
+	w, err := jwhois.Whois(req.Name)
 
-	return nil, nil
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("Source: " + string(w))
+
+	res = &Response{
+		Data: string(w),
+	}
+	return res, nil
 }

@@ -23,7 +23,7 @@ func (s *Server) Whois(ctx context.Context, req *Request) (res *Response, err er
 	fmt.Println("Source: " + string(w))
 
 	res = &Response{
-		Type: tpe,
+		Type: int32(tpe),
 		Data: string(w),
 	}
 	return res, nil

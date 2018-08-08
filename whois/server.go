@@ -3,6 +3,7 @@ package whois
 import (
 	"context"
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/millken/jwhois"
 )
@@ -20,11 +21,24 @@ func (s *Server) Whois(ctx context.Context, req *Request) (res *Response, err er
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Source: " + string(w))
-
+	sw := string(w)
+	fmt.Println("Source: " + sw)
+	if !utf8.ValidString(sw) {
+		v := make([]rune, 0, len(sw))
+		for i, r := range sw {
+			if r == utf8.RuneError {
+				_, size := utf8.DecodeRuneInString(sw[i:])
+				if size == 1 {
+					continue
+				}
+			}
+			v = append(v, r)
+		}
+		sw = string(v)
+	}
 	res = &Response{
 		Type: int32(tpe),
-		Data: string(w),
+		Data: sw,
 	}
 	return res, nil
 }

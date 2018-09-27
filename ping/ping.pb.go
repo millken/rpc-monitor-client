@@ -3,9 +3,11 @@
 
 package ping
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 import (
 	context "golang.org/x/net/context"
@@ -35,16 +37,17 @@ func (m *Request) Reset()         { *m = Request{} }
 func (m *Request) String() string { return proto.CompactTextString(m) }
 func (*Request) ProtoMessage()    {}
 func (*Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ping_e4b7c8cf61a696fc, []int{0}
+	return fileDescriptor_5c87d21894b01cab, []int{0}
 }
+
 func (m *Request) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Request.Unmarshal(m, b)
 }
 func (m *Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Request.Marshal(b, m, deterministic)
 }
-func (dst *Request) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Request.Merge(dst, src)
+func (m *Request) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Request.Merge(m, src)
 }
 func (m *Request) XXX_Size() int {
 	return xxx_messageInfo_Request.Size(m)
@@ -82,16 +85,17 @@ func (m *Response) Reset()         { *m = Response{} }
 func (m *Response) String() string { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()    {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ping_e4b7c8cf61a696fc, []int{1}
+	return fileDescriptor_5c87d21894b01cab, []int{1}
 }
+
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Response.Unmarshal(m, b)
 }
 func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Response.Marshal(b, m, deterministic)
 }
-func (dst *Response) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Response.Merge(dst, src)
+func (m *Response) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Response.Merge(m, src)
 }
 func (m *Response) XXX_Size() int {
 	return xxx_messageInfo_Response.Size(m)
@@ -227,9 +231,9 @@ var _Ping_serviceDesc = grpc.ServiceDesc{
 	Metadata: "ping/ping.proto",
 }
 
-func init() { proto.RegisterFile("ping/ping.proto", fileDescriptor_ping_e4b7c8cf61a696fc) }
+func init() { proto.RegisterFile("ping/ping.proto", fileDescriptor_5c87d21894b01cab) }
 
-var fileDescriptor_ping_e4b7c8cf61a696fc = []byte{
+var fileDescriptor_5c87d21894b01cab = []byte{
 	// 174 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2f, 0xc8, 0xcc, 0x4b,
 	0xd7, 0x07, 0x11, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0x2c, 0x20, 0xb6, 0x92, 0x31, 0x17,

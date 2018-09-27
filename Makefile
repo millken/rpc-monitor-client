@@ -6,6 +6,8 @@ proto:
 		echo compiled: $$f; \
 	done
 
+docker:
+	docker build -t dnsoa/romaer .
 run:
 	docker-compose build
 	docker-compose up --remove-orphans

@@ -9,7 +9,6 @@ import (
 
 	"./ping"
 	"./whois"
-	"github.com/hashicorp/logutils"
 	"github.com/kardianos/service"
 	"google.golang.org/grpc"
 )
@@ -32,7 +31,7 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	listen, err := net.Listen("tcp", ":6543")
+	listen, err := net.Listen("tcp", ":59051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -46,17 +45,11 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func main() {
+	var err error
 	defer stack()
-	filterWriter, err := os.Create("roma.log")
 	if err != nil {
 		panic(err)
 	}
-	filter := &logutils.LevelFilter{
-		Levels:   []logutils.LogLevel{"DEBUG", "INFO", "WARN", "ERROR"},
-		MinLevel: logutils.LogLevel("WARN"),
-		Writer:   filterWriter,
-	}
-	log.SetOutput(filter)
 
 	svcConfig := &service.Config{
 		Name:        "rpc-monitor-client",

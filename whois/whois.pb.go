@@ -3,9 +3,11 @@
 
 package whois
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 import (
 	context "golang.org/x/net/context"
@@ -34,16 +36,17 @@ func (m *Request) Reset()         { *m = Request{} }
 func (m *Request) String() string { return proto.CompactTextString(m) }
 func (*Request) ProtoMessage()    {}
 func (*Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_whois_bba076808e164d7c, []int{0}
+	return fileDescriptor_771cb41461c075d8, []int{0}
 }
+
 func (m *Request) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Request.Unmarshal(m, b)
 }
 func (m *Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Request.Marshal(b, m, deterministic)
 }
-func (dst *Request) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Request.Merge(dst, src)
+func (m *Request) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Request.Merge(m, src)
 }
 func (m *Request) XXX_Size() int {
 	return xxx_messageInfo_Request.Size(m)
@@ -73,16 +76,17 @@ func (m *Response) Reset()         { *m = Response{} }
 func (m *Response) String() string { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()    {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_whois_bba076808e164d7c, []int{1}
+	return fileDescriptor_771cb41461c075d8, []int{1}
 }
+
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Response.Unmarshal(m, b)
 }
 func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Response.Marshal(b, m, deterministic)
 }
-func (dst *Response) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Response.Merge(dst, src)
+func (m *Response) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Response.Merge(m, src)
 }
 func (m *Response) XXX_Size() int {
 	return xxx_messageInfo_Response.Size(m)
@@ -184,9 +188,9 @@ var _Whois_serviceDesc = grpc.ServiceDesc{
 	Metadata: "whois/whois.proto",
 }
 
-func init() { proto.RegisterFile("whois/whois.proto", fileDescriptor_whois_bba076808e164d7c) }
+func init() { proto.RegisterFile("whois/whois.proto", fileDescriptor_771cb41461c075d8) }
 
-var fileDescriptor_whois_bba076808e164d7c = []byte{
+var fileDescriptor_771cb41461c075d8 = []byte{
 	// 138 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2c, 0xcf, 0xc8, 0xcf,
 	0x2c, 0xd6, 0x07, 0x93, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0xac, 0x60, 0x8e, 0x92, 0x2c,

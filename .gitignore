@@ -12,3 +12,4 @@
 *.out
 main
 *.log
+rpc-monitor-client

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -12,6 +13,12 @@ import (
 	"github.com/kardianos/service"
 	"google.golang.org/grpc"
 )
+
+var listen string
+
+func init() {
+	flag.StringVar(&listen, "listen", ":58000", "default listen address")
+}
 
 func stack() {
 	err := recover()
@@ -31,7 +38,7 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	listen, err := net.Listen("tcp", ":59051")
+	listen, err := net.Listen("tcp", listen)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -50,7 +57,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
+	flag.Parse()
 	svcConfig := &service.Config{
 		Name:        "rpc-monitor-client",
 		DisplayName: "Agent for RPC monitor",
